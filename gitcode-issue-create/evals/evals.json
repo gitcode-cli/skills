@@ -1,0 +1,43 @@
+{
+  "skill_name": "gitcode-issue-create",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我发现在 gitcode-cli/cli 上 `gc issue edit --body-file -` 不接受 stdin，但帮助信息里写了支持 stdin 输入。这是一个 bug，帮我写一个合格的 issue 并提交（用 dry-run 模式，不要实际创建）",
+      "expected_output": "根据 bug report 模板引导填写（问题现象、复现步骤、期望vs实际行为、环境信息），查重搜索已有类似 issue，建议标签（type/bug + scope/issue），预览确认后 dry-run 提交",
+      "files": [],
+      "expectations": [
+        "识别了 issue 类型为 bug",
+        "进行了查重搜索（搜索已有类似 issue）",
+        "按 bug 模板整理了信息（至少含问题现象、期望vs实际行为、环境信息）",
+        "给出了标签建议（基于仓库实际标签）",
+        "生成了可提交的 issue 内容预览"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "gitcode-cli/cli 这个项目，gc pr 没有 label 子命令，但 gc issue 有 label 命令可以加标签。我想提个 feature request，帮我写个规范的 issue 草稿",
+      "expected_output": "按照 feature request 模板整理（需求背景、功能描述、使用场景、验收标准），搜过已有 issue 确认不是重复，给出了特征标签建议，预览 issue内容",
+      "files": [],
+      "expectations": [
+        "识别了 issue 类型为 feature",
+        "进行了查重搜索",
+        "按 feature 模板整理了信息（至少含需求背景、功能描述、验收标准）",
+        "引用了现有参照（gc issue label 命令）",
+        "给出了标签和优先级建议"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "我在用 gitcode-cli/cli 的时候发现 gc milestone view 返回的 JSON 结果里，有时候 issue 计数是 0 但其实有 issue、有时候计数不准。不太确定这算 bug 还是 enhancement？帮我理一理，整理成 issue",
+      "expected_output": "判断类型（可能选择 bug 或 enhancement 并说明理由），按对应模板整理信息，搜索已有类似 milestone 相关 issue，建议标签和优先级",
+      "files": [],
+      "expectations": [
+        "对模糊的问题类型做出了明确判断并给出了理由",
+        "进行了查重搜索（搜索 milestone 相关已有 issue）",
+        "按对应模板整理了完整 issue 内容",
+        "给出了标签和优先级建议"
+      ]
+    }
+  ]
+}

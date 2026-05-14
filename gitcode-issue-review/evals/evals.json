@@ -1,0 +1,26 @@
+{
+  "skill_name": "gitcode-issue-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "评审 gitcode-cli/cli 的 Issue #239，这是一个 bug report 说 `gc issue edit --body-file -` 不接受 stdin 输入。检查这个 bug report 的信息完整度，给出修复建议",
+      "expected_output": "检查 bug report 信息完整度（复现步骤、环境信息、期望行为 vs 实际行为），给出代码层面的修复方案和涉及文件",
+      "files": [],
+      "expectations": []
+    },
+    {
+      "id": 2,
+      "prompt": "全面 review gitcode-cli/cli 的 Issue #194，这是一个 feature request 要添加 `gc pr label` 命令。做需求分析、需求分解，并给出具体的开发实现方案",
+      "expected_output": "需求分析（核心诉求、边界、可行性、影响范围），子任务拆解（按依赖排序含工作量估计），实现方案（涉及的关键文件、核心逻辑设计、测试策略、风险点）",
+      "files": [],
+      "expectations": []
+    },
+    {
+      "id": 3,
+      "prompt": "分析 gitcode-cli/cli 的 Issue #190，这是一个关于 milestone view issues 改进的 refactor proposal。帮我把这个 issue 拆成可以独立开发的子任务",
+      "expected_output": "需求分解为可独立执行的子任务，每个子任务有涉及文件、预估工作量和依赖关系",
+      "files": [],
+      "expectations": []
+    }
+  ]
+}

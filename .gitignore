@@ -1,0 +1,9 @@
+# Test/eval workspace directories (ephemeral)
+*-workspace/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store

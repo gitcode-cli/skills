@@ -1,0 +1,43 @@
+{
+  "skill_name": "gitcode-pr-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我全面 review 一下 PR #42，这个 PR 改动了用户认证模块，涉及 token 生成和数据库操作，我比较担心安全问题和性能",
+      "expected_output": "生成多维度评审报告，包含：整体评价、变更摘要、各维度评估表（代码质量、安全、架构、测试、文档、易用性）、行内评论针对具体代码行、安全漏洞检查（token处理、SQL注入）、性能问题分析、测试建议",
+      "files": [],
+      "expectations": [
+        "评审覆盖了安全维度，检查了 token 处理和数据库操作",
+        "评审覆盖了代码质量维度，检查了边界条件和错误处理",
+        "生成了行内评论，精确指向具体代码行",
+        "评审报告包含整体评价和变更摘要",
+        "给出了具体可操作的修改建议"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "快速扫一下 PR #15，看看有没有明显的代码缺陷或者安全漏洞，我马上要合并了",
+      "expected_output": "聚焦高风险项的快速评审：安全漏洞检查、明显代码缺陷、阻塞性问题标识、简洁的整体评价和最终建议（是否可以合并）",
+      "files": [],
+      "expectations": [
+        "评审聚焦在安全漏洞和明显缺陷上",
+        "没有过度展开大型评审，保持简洁",
+        "给出了明确的合并建议（通过/修改后通过/不通过）",
+        "识别了阻塞性问题（如有）"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "review PR #128 for me, focus on architecture and testing. This PR refactors the payment service and I want to make sure the design is solid and tests cover edge cases.",
+      "expected_output": "Focus on architecture dimensions (design patterns, abstraction, coupling, extensibility, consistency) and testing dimensions (coverage, edge cases, integration tests, mock usage). Generate both inline comments and overall report.",
+      "files": [],
+      "expectations": [
+        "评审聚焦在架构和测试两个维度",
+        "架构评审检查了设计模式、抽象层次、耦合度、一致性",
+        "测试评审检查了覆盖率、边界条件、集成测试",
+        "生成了行内评论指向架构和测试问题",
+        "评审报告包含架构和测试的详细评估"
+      ]
+    }
+  ]
+}

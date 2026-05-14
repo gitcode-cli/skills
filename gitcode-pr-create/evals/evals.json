@@ -1,0 +1,42 @@
+{
+  "skill_name": "gitcode-pr-create",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我在 gitcode-cli/cli 项目的 bugfix/issue-242 分支上改完了，修复了 ListIssueComments 只能获取单页评论的 bug，新增了 ListIssueCommentsAll 自动翻页函数。repo 在 /home/wpf/claude-code/vibe-coding/gitcode-cli，当前在 main 分支。帮我生成规范的 PR 标题和描述（不要实际创建 PR，只生成内容保存到文件）",
+      "expected_output": "检查分支变更，生成 fix 类型的 conventional commit 标题，自动填充 PR 描述含变更说明、测试计划、关联 issue（#242）",
+      "files": [],
+      "expectations": [
+        "生成了 fix 类型的 PR 标题",
+        "PR 描述含有变更摘要和核心变更点列表",
+        "PR 描述列出了关联 issue（#242）",
+        "PR 描述包含了测试计划",
+        "检查了当前分支状态和变更统计"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "帮我把 gitcode-cli/cli 最近这几个关于 issue 和 PR 的 JSON 输出修复合并到一个 PR 里提交。repo 在 /home/wpf/claude-code/vibe-coding/gitcode-cli。只需要生成 PR 描述，不要实际创建",
+      "expected_output": "检查最近 commit，生成合适的 PR 标题，描述整合了多个 JSON 输出修复，列出关联 issue",
+      "files": [],
+      "expectations": [
+        "生成了合适的 PR 标题（符合 conventional commit 格式）",
+        "PR 描述整合了多个变更点",
+        "PR 描述列出了所有关联 issue",
+        "包含了测试计划"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "当前 gitcode-cli/cli 分支有一堆改动（版本号、文档、bugfix 混在一起），repo 在 /home/wpf/claude-code/vibe-coding/gitcode-cli。帮我整理一下生成 PR 描述，如果有不相关的改动建议我拆 PR",
+      "expected_output": "检查变更，如果发现不相关变更混在一起则建议拆分，为可合并的变更生成 PR 描述",
+      "files": [],
+      "expectations": [
+        "检查了变更内容并识别了混合变更类型",
+        "如果变更不相关，给出了拆分建议",
+        "生成了 PR 标题和描述",
+        "PR 描述包含测试计划"
+      ]
+    }
+  ]
+}
