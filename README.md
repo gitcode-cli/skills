@@ -53,16 +53,48 @@ GitCode 全生命周期 skills 集合，结合 [Superpowers](https://github.com/
 
 ## 快速开始
 
-```bash
-# 1. 安装 Superpowers（本地开发循环）
-git clone https://github.com/obra/superpowers ~/.claude/superpowers
+### 前提
 
-# 2. 安装 gitcode skills（远端协作）
+- 已安装 [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
+- 已安装并配置 `gc` CLI（GitCode 命令行工具）
+
+### Step 1：安装 Superpowers（本地开发循环）
+
+```bash
+# 在 Claude Code 中执行（从官方插件市场安装）
+/plugin install superpowers
+```
+
+这会自动加载 13 个 skill，包括 brainstorming、writing-plans、TDD、subagent-driven-development、requesting-code-review、finishing-a-development-branch 等。
+
+验证：
+```bash
+ls ~/.claude/skills/ | grep -E "brainstorming|writing-plans|test-driven"
+```
+
+### Step 2：安装 gitcode skills（远端协作）
+
+```bash
 git clone git@gitcode.com:gitcode-cli/gitcode-cli-skills.git /tmp/gitcode-skills
 cp -r /tmp/gitcode-skills/gitcode-* ~/.claude/skills/
+```
 
-# 3. 开始使用
-# 输入 "启动开发工作流，我要做 X" → 触发 gitcode-dev-workflow
+验证：
+```bash
+ls ~/.claude/skills/ | grep gitcode
+# 应看到 9 个 gitcode-* 目录
+```
+
+### Step 3：验证
+
+```bash
+# 重启 Claude Code 或在会话中查看可用 skills
+# 应包含 Superpowers 和 gitcode skills 的全部 skill
+```
+
+开始使用：
+```
+启动开发工作流，我要做 X
 ```
 
 ## 典型工作流

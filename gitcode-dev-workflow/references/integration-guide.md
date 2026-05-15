@@ -87,18 +87,30 @@ gitcode-dev-workflow（编排层）
 
 ## 安装
 
-```bash
-# 1. 安装 Superpowers
-git clone https://github.com/obra/superpowers ~/.claude/superpowers
-# 按照 Superpowers 的 README 完成 skill 注册
+### Superpowers（官方插件市场）
 
-# 2. 安装 gitcode skills
+```bash
+# 在 Claude Code 中执行
+/plugin install superpowers
+```
+
+Superpowers 会从 Claude 官方插件市场自动安装到 `~/.claude/skills/`。
+
+### gitcode skills（手动安装）
+
+```bash
 git clone git@gitcode.com:gitcode-cli/gitcode-cli-skills.git /tmp/gitcode-skills
 cp -r /tmp/gitcode-skills/gitcode-* ~/.claude/skills/
-
-# 3. 验证
-# 输入 "启动开发工作流，我要做 X" 应该触发 gitcode-dev-workflow
 ```
+
+### 验证
+
+```bash
+ls ~/.claude/skills/ | grep -E "brainstorming|writing-plans|test-driven|gitcode"
+# 应看到 Superpowers 的 13 个 skill + gitcode 的 9 个 skill
+```
+
+两个体系安装完成后，重启 Claude Code 或在会话中直接使用。`gitcode-dev-workflow` 会自动发现并编排两者。
 
 ## 不引入完整 Superpowers 时的替代方案
 

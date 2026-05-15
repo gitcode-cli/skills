@@ -14,6 +14,15 @@ description: |
 
 串联 **Superpowers（本地开发）** + **gitcode skills（远端协作）**，覆盖从需求到交付的全生命周期。
 
+## 前提
+
+本 skill 依赖以下两个体系：
+
+- **Superpowers**：通过 `/plugin install superpowers` 从 Claude 官方插件市场安装
+- **gitcode skills**：`git clone` + `cp -r gitcode-* ~/.claude/skills/`
+
+两个体系必须都已安装才能使用完整工作流。详见 `references/integration-guide.md`。
+
 ## 工作流总览
 
 ```

@@ -2,6 +2,24 @@
 
 > 演示如何使用 gitcode skills + Superpowers 完成从需求到交付的全生命周期开发
 
+## 前提：环境准备
+
+在开始之前，确保已安装以下组件：
+
+```bash
+# 1. 安装 Superpowers（本地开发循环）
+# 在 Claude Code 中执行：
+/plugin install superpowers
+
+# 2. 安装 gitcode skills（远端协作）
+git clone git@gitcode.com:gitcode-cli/gitcode-cli-skills.git /tmp/gitcode-skills
+cp -r /tmp/gitcode-skills/gitcode-* ~/.claude/skills/
+
+# 3. 验证安装
+ls ~/.claude/skills/ | grep -E "brainstorming|writing-plans|gitcode"
+# 应看到 Superpowers 的 13 个 skill + gitcode 的 9 个 skill
+```
+
 ## 项目背景
 
 **仓库**: `git@gitcode.com:aflyingto/openlibing-platform-release.git`
