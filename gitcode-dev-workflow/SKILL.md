@@ -35,14 +35,27 @@ description: |
 
 ### Issue 审计日志（强制）
 
-**Issue 是全流程唯一的审计日志源。** 每个阶段的关键产出物必须以评论形式发布到关联 Issue 上：
+**Issue 是全流程唯一的审计日志源。** 每个阶段的关键产出物必须以评论形式发布到关联 Issue 上。
 
 ```
-Phase 1 完成 → gc issue comment <number> --body "需求分析 + 任务分解"
-Phase 2 完成 → gc issue comment <number> --body "原子任务清单 + 测试报告"
-Quality Gate → gc issue comment <number> --body "质量门禁报告 (build/test/coverage/format/static)"
-Phase 3 完成 → gc issue comment <number> --body "PR #N 已创建 + 审查结论"
+Phase 1 完成 → gc issue comment <number> --body-file /tmp/phase1-report.md
+Phase 2 完成 → gc issue comment <number> --body-file /tmp/phase2-tasks.md
+Quality Gate → gc issue comment <number> --body-file /tmp/quality-report.md
+Phase 3 完成 → gc issue comment <number> --body "PR #N: <url> — 审查通过"
 ```
+
+**长内容必须用 `--body-file`**，不要用 `--body` 直接传。阶段产出物（需求分析、任务清单、质量报告）通常 100-300 行，
+直接 `--body "..."` 会触发 shell 参数长度限制。写入临时文件再传：
+
+```bash
+# 正确做法
+cat > /tmp/phase-report.md << 'REPORT'
+...长内容...
+REPORT
+gc issue comment <number> --body-file /tmp/phase-report.md
+```
+
+Phase 3 的 PR 链接是短消息，用 `--body` 就可以。
 
 任何人不看对话记录，仅通过 Issue 评论区，就能完整追溯从需求到交付的全过程。
 

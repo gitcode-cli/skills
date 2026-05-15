@@ -164,8 +164,23 @@ head -100 api/queries_issue_test.go
 4. 不确定时，先用 `--body-file -` 测试评论位置，或用整体评论代替
 
 **发布行内评论**：
+
+短评论直接用 `--body`：
 ```bash
-gc pr comment <number> --path "path/to/file.go" --position <diff_line_number> --body "评论内容"
+gc pr comment <number> --path "path/to/file.go" --position <diff_line_number> --body "简短评论"
+```
+
+含代码示例的长评论用 `--body-file`（避免 shell 参数长度限制）：
+```bash
+cat > /tmp/inline-comment.md << 'COMMENT'
+**[代码质量]**: 此处存在 XXX 问题
+
+**建议**: 
+```java
+// 长代码示例 ...
+```
+COMMENT
+gc pr comment <number> --path "path/to/file.go" --position <diff_line_number> --body-file /tmp/inline-comment.md
 ```
 
 **行内评论格式**：

@@ -66,10 +66,10 @@ build → test → coverage(≥80%) → format → static-analysis
 **Issue 是全流程唯一的审计日志源。** 每个阶段产出物以评论发布到关联 Issue：
 
 ```
-Phase 1 完成 → gc issue comment <number> --body "需求分析报告"
-Phase 2 完成 → gc issue comment <number> --body "原子任务清单 + 测试结果"
-Quality Gate → gc issue comment <number> --body "质量报告 (build/test/coverage/format/static)"
-Phase 3 完成 → gc issue comment <number> --body "PR #N + 审查结论"
+Phase 1 完成 → gc issue comment <n> --body-file /tmp/phase1-report.md
+Phase 2 完成 → gc issue comment <n> --body-file /tmp/phase2-tasks.md
+Quality Gate → gc issue comment <n> --body-file /tmp/quality-report.md
+Phase 3 完成 → gc issue comment <n> --body "PR #N: <url> — 审查通过"
 ```
 
 不看对话记录，只看 Issue 评论区就能完整追溯全流程。
