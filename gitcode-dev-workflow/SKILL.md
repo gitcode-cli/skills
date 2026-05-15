@@ -16,142 +16,106 @@ description: |
 
 ## 前提
 
-本 skill 依赖以下两个体系：
-
-- **Superpowers**：通过 `/plugin install superpowers` 从 Claude 官方插件市场安装
+- **Superpowers**：`/plugin install superpowers`
 - **gitcode skills**：`git clone` + `cp -r gitcode-* ~/.claude/skills/`
 
-两个体系必须都已安装才能使用完整工作流。详见 `references/integration-guide.md`。
+## 🚨 强制执行规则
+
+**以下规则不可跳过，任何一步不满足就不能进入下一步。**
+
+### 阶段闸门
+
+进入下一阶段前，必须**出示产出物证据**给用户确认：
+
+| 阶段转换 | 必须出示的证据 | 未完成则 |
+|----------|--------------|---------|
+| 需求 → 开发 | Issue URL + 需求分析报告 | 🔒 不允许写一行代码 |
+| 开发 → 质量关卡 | 全部原子任务清单（全部标记 done） | 🔒 不允许跑质量检查 |
+| 质量关卡 → 交付 | 5 项检查全部绿色（build/test/coverage/format/static） | 🔒 不允许创建 PR |
+
+### TDD 强制规则
+
+```
+每个原子任务 = RED → GREEN → REFACTOR，缺一不可。
+
+RED:   先写测试，确认测试失败（验证测试有效）
+GREEN: 写最小实现让测试通过（不写多余代码）
+REFACTOR: 测试通过后优化结构（不改行为）
+
+禁止: 先写实现再补测试
+禁止: 合并多个原子任务一次完成
+```
+
+### 子代理隔离规则
+
+```
+每个原子任务由独立 AI 子代理执行：
+- 子代理只看到：任务描述 + 相关代码 + 测试要求
+- 子代理不得访问：其他任务上下文、全局设计决策
+
+强制使用 Subagent 工具，组名: workflow-<task-id>
+```
 
 ## 工作流总览
 
 ```
-需求阶段 ──── Superpowers                   → gitcode skills
-  ├─ 头脑风暴      brainstorming          (本地问答)
-  ├─ 创建 Issue                             → issue-create
-  └─ 需求评审                               → issue-review
-
-开发阶段 ──── Superpowers
-  ├─ 任务拆解      writing-plans          (原子任务)
-  ├─ TDD 循环      TDD skill              (RED-GREEN-REFACTOR)
-  ├─ 子代理执行    subagent-driven-dev    (每任务独立会话)
-  └─ 任务间审查    requesting-code-review (快速审查)
-
-🔒 质量关卡 ── gitcode-dev-quality（必须全部通过）
-  ├─ 构建验证      go build / mvn compile
-  ├─ 全量 UT       go test ./... / mvn test
-  ├─ 覆盖率        >=80% 增量
-  ├─ 代码格式化    gofmt / spotless / ruff
-  └─ 静态分析      go vet / golangci-lint
-
-交付阶段 ──── Superpowers                   → gitcode skills
-  ├─ 提交 PR                                → pr-create
-  ├─ 多维审查                               → pr-review
-  ├─ 收尾          finishing              (测试验证 + MR 选项)
-  └─ 发布                                   → release-helper
+Phase 1: 需求               Phase 2: 开发               🔒 Quality Gate            Phase 3: 交付
+──────────────────────────────────────────────────────────────────────────────────────────
+brainstorming               writing-plans               build      ✅/❌            pr-create
+issue-create    →闸门→      TDD (per task)              test       ✅/❌  →闸门→    pr-review
+issue-review                subagent-dev (isolated)     coverage   ✅/❌            finishing
+                            requesting-review (per)     format     ✅/❌            release-helper
+     ↓                             ↓                   static     ✅/❌                  ↓
+产出: Issue URL              产出: 全绿原子任务清单      产出: Quality Report       产出: Merged PR
 ```
 
 ## 阶段详解
 
-### 阶段一：需求（想法 → 清晰规格）
+### 阶段一：需求
 
-**触发**：用户说 "我想做一个 X" 或 "我有个需求"
+1. **brainstorming** — 最少问清 4 个问题：为谁解决什么 / 验收标准 / 边界（做什么不做什么） / 参考方案
+2. **issue-create** — 查重 → 模板填充 → 提交
+3. **issue-review** — 独立验证 PR 描述声明 + 代码库搜索 + 需求分解 + 实现方案
 
-**本地 — Superpowers brainstorming**：
+**闸门**：向用户展示 Issue URL + 需求分析报告，确认后进入阶段二。
+
+### 阶段二：开发
+
+1. **writing-plans** — 拆为 2-5min 原子任务（不是小时级，不是天级）
+2. **TDD** — 每个任务严格 RED→GREEN→REFACTOR
+3. **subagent-driven-dev** — 每个任务独立子代理执行，组名 `workflow-<task-id>`
+4. **requesting-code-review** — 每个任务完成后触发快速审查
+
+**闸门**：向用户展示全部原子任务清单 + 全绿测试结果，确认后进入质量关卡。
+
+### 阶段三：质量关卡
+
+按顺序执行，**任何一项失败立即停止**：
+1. `mvn compile` / `go build ./...`
+2. `mvn test` / `go test ./... -race -count=1`
+3. 覆盖率（增量 ≥ 80%）
+4. 格式化（`gofmt -l .` / `mvn spotless:check`）
+5. 静态分析（`go vet` / `golangci-lint run` / `mvn pmd:check`）
+
+**闸门**：5 项全部绿色，向用户出示 Quality Report，确认后进入阶段三。
+
+### 阶段四：交付
+
+1. **pr-create** — 检查变更 → conventional commit 标题 → PR 描述 → 创建
+2. **pr-review** — 6 维审查 + **行内评论**（必须，不是可选的）
+3. **finishing** — 全测试通过 + merge 决策
+
+## 合规检查清单
+
+每个阶段结束后，用户确认前，输出此清单：
+
 ```
-用苏格拉底式提问澄清：
-- 这个功能为谁解决什么问题？
-- 成功的验收标准是什么？
-- 什么场景下使用？什么人使用？
-- 有没有现有方案可以参考？
-- 边界在哪里（做什么 vs 不做什么）？
+Phase N 合规检查:
+  [ ] 步骤 1: <step> — <evidence>
+  [ ] 步骤 2: <step> — <evidence>
+  ...
+  [ ] 闸门产出物: <artifact>
+  
+  缺失项: <list or "无">
+  是否允许进入下一阶段: [ ]
 ```
-输出：非正式的需求阐述 + 功能边界 + 验收标准
-
-**远端 — gitcode skills**：
-```
-# 提交为正式 Issue
-→ gitcode-issue-create（查重 + 模板 + 提交）
-
-# 技术深度评审
-→ gitcode-issue-review（需求分析 + 任务分解 + 实现方案）
-```
-
-**交接条件**：Issue 已创建 + 需求分析报告已有 + 明确可开始编码
-
-### 阶段二：开发（需求 → 可运行代码）
-
-**本地 — Superpowers writing-plans**：
-- 将需求拆为 2-5min 可完成的原子任务
-- 每个任务独立的验证标准
-- 按依赖关系排序
-
-**本地 — Superpowers TDD**（每个原子任务循环）：
-```
-1. RED   —— 写失败测试（先定义预期行为）
-2. GREEN —— 写最小实现让测试通过
-3. REFACTOR —— 优化代码结构但保持测试绿色
-```
-
-**本地 — Superpowers subagent-driven-dev**：
-- 每个原子任务由独立 AI 会话处理
-- 避免上下文膨胀和漂移
-- 每次会话只看到：任务描述 + 相关代码 + 测试要求
-
-**本地 — Superpowers requesting-code-review**：
-- 每个原子任务完成后触发快速审查
-- 报告问题严重性（blocker / major / minor）
-- 必须通过才能进入下一个任务
-
-**交接条件**：所有原子任务完成 + 全部测试绿色 + 任务间审查全部通过
-
-### 阶段三：交付（代码 → 合并发布）
-
-**远端 — gitcode skills**：
-```
-# 生成 PR 标题和描述
-→ gitcode-pr-create（检查变更 + conventional commit + 提交）
-
-# 全面代码审查
-→ gitcode-pr-review（6维度 + 行内评论 + 整体报告）
-```
-
-**本地 — Superpowers finishing-a-development-branch**：
-- 验证所有测试通过
-- 检查 CI 状态
-- 提供选项：merge / PR / discard
-
-**远端 — gitcode skills**：
-```
-# 如需发布
-→ gitcode-release-helper（release note + checklist + 执行）
-```
-
-## 每个阶段的进入条件
-
-| 阶段 | 进入条件 | 退出条件 |
-|------|---------|---------|
-| 需求 | 用户有模糊想法 | Issue + 需求分析报告 |
-| 开发 | 验收标准明确，可行 | 全测试绿 + 审查通过 |
-| 🔒 质量关卡 | 开发完成，代码已提交 | 构建+UT+覆盖率+lint+分析全部通过 |
-| 交付 | 质量关卡通过 | PR merged + release 发布(可选) |
-
-## 快速开始
-
-**完整流程**：
-```
-启动 gitcode-dev-workflow，我有个需求：给 gc CLI 加 pr label 子命令
-```
-
-**从中间进入**：
-```
-当前在 PR #180 审查阶段，帮我把剩下的交付流程走完
-```
-
-## 注意事项
-
-- 每个阶段完成后显式确认，再进入下一阶段
-- 阶段一和二严格串行（需求不清不编码），阶段二内可并行（独立原子任务）
-- Superpowers 负责本地开发和执行决策，gitcode skills 负责远端平台操作和正式记录
-- 如果用户需求已经很清晰（已有 Issue + 分析报告），可以跳过阶段一直接从阶段二开始
-- 详细的分工和技能映射参考 `references/integration-guide.md`
