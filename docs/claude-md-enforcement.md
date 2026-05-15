@@ -61,6 +61,19 @@ build → test → coverage(≥80%) → format → static-analysis
  任何一项失败 = 停止，不允许 commit
 ```
 
+### Issue 审计日志
+
+**Issue 是全流程唯一的审计日志源。** 每个阶段产出物以评论发布到关联 Issue：
+
+```
+Phase 1 完成 → gc issue comment <number> --body "需求分析报告"
+Phase 2 完成 → gc issue comment <number> --body "原子任务清单 + 测试结果"
+Quality Gate → gc issue comment <number> --body "质量报告 (build/test/coverage/format/static)"
+Phase 3 完成 → gc issue comment <number> --body "PR #N + 审查结论"
+```
+
+不看对话记录，只看 Issue 评论区就能完整追溯全流程。
+
 ### 审计追踪
 
 每次开发启动时记录：
@@ -71,19 +84,15 @@ build → test → coverage(≥80%) → format → static-analysis
 | Phase | 步骤 | 状态 | 证据 |
 |-------|------|------|------|
 | 需求 | brainstorming | □ | - |
-| 需求 | issue-create | □ | - |
-| 需求 | issue-review | □ | - |
-| 开发 | writing-plans | □ | - |
+| 需求 | issue-create | □ | Issue URL |
+| 需求 | issue-review | □ | Comment: <link> |
+| 开发 | writing-plans | □ | Comment: <link> |
 | 开发 | TDD (per task) | □ | - |
 | 开发 | subagent (per task) | □ | - |
 | 开发 | requesting-review | □ | - |
-| 质量 | build | □ | - |
-| 质量 | test | □ | - |
-| 质量 | coverage | □ | - |
-| 质量 | format | □ | - |
-| 质量 | static | □ | - |
-| 交付 | pr-create | □ | - |
-| 交付 | pr-review | □ | - |
+| 质量 | build/test/coverage/format/static | □ | Comment: <link> |
+| 交付 | pr-create | □ | PR URL |
+| 交付 | pr-review | □ | Review comment |
 | 交付 | finishing | □ | - |
 
 缺失步骤: <自动填充>

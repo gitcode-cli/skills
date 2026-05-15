@@ -33,6 +33,19 @@ description: |
 | 开发 → 质量关卡 | 全部原子任务清单（全部标记 done） | 🔒 不允许跑质量检查 |
 | 质量关卡 → 交付 | 5 项检查全部绿色（build/test/coverage/format/static） | 🔒 不允许创建 PR |
 
+### Issue 审计日志（强制）
+
+**Issue 是全流程唯一的审计日志源。** 每个阶段的关键产出物必须以评论形式发布到关联 Issue 上：
+
+```
+Phase 1 完成 → gc issue comment <number> --body "需求分析 + 任务分解"
+Phase 2 完成 → gc issue comment <number> --body "原子任务清单 + 测试报告"
+Quality Gate → gc issue comment <number> --body "质量门禁报告 (build/test/coverage/format/static)"
+Phase 3 完成 → gc issue comment <number> --body "PR #N 已创建 + 审查结论"
+```
+
+任何人不看对话记录，仅通过 Issue 评论区，就能完整追溯从需求到交付的全过程。
+
 ### TDD 强制规则
 
 ```
@@ -77,7 +90,7 @@ issue-review                subagent-dev (isolated)     coverage   ✅/❌      
 2. **issue-create** — 查重 → 模板填充 → 提交
 3. **issue-review** — 独立验证 PR 描述声明 + 代码库搜索 + 需求分解 + 实现方案
 
-**闸门**：向用户展示 Issue URL + 需求分析报告，确认后进入阶段二。
+**闸门**：向用户展示 Issue URL + 需求分析报告，确认后**将报告作为 Issue 评论发布**，然后进入阶段二。
 
 ### 阶段二：开发
 
@@ -86,7 +99,7 @@ issue-review                subagent-dev (isolated)     coverage   ✅/❌      
 3. **subagent-driven-dev** — 每个任务独立子代理执行，组名 `workflow-<task-id>`
 4. **requesting-code-review** — 每个任务完成后触发快速审查
 
-**闸门**：向用户展示全部原子任务清单 + 全绿测试结果，确认后进入质量关卡。
+**闸门**：展示原子任务清单 + 测试结果，确认后**将清单作为 Issue 评论发布**，然后进入质量关卡。
 
 ### 阶段三：质量关卡
 
@@ -97,7 +110,7 @@ issue-review                subagent-dev (isolated)     coverage   ✅/❌      
 4. 格式化（`gofmt -l .` / `mvn spotless:check`）
 5. 静态分析（`go vet` / `golangci-lint run` / `mvn pmd:check`）
 
-**闸门**：5 项全部绿色，向用户出示 Quality Report，确认后进入阶段三。
+**闸门**：5 项全部绿色，出示 Quality Report，确认后**将报告作为 Issue 评论发布**，然后进入阶段四。
 
 ### 阶段四：交付
 
@@ -114,7 +127,7 @@ Phase N 合规检查:
   [ ] 步骤 1: <step> — <evidence>
   [ ] 步骤 2: <step> — <evidence>
   ...
-  [ ] 闸门产出物: <artifact>
+  [ ] Issue 评论已发布: <comment_link>
   
   缺失项: <list or "无">
   是否允许进入下一阶段: [ ]
