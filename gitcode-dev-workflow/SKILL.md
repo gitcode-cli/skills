@@ -37,6 +37,13 @@ description: |
   ├─ 子代理执行    subagent-driven-dev    (每任务独立会话)
   └─ 任务间审查    requesting-code-review (快速审查)
 
+🔒 质量关卡 ── gitcode-dev-quality（必须全部通过）
+  ├─ 构建验证      go build / mvn compile
+  ├─ 全量 UT       go test ./... / mvn test
+  ├─ 覆盖率        >=80% 增量
+  ├─ 代码格式化    gofmt / spotless / ruff
+  └─ 静态分析      go vet / golangci-lint
+
 交付阶段 ──── Superpowers                   → gitcode skills
   ├─ 提交 PR                                → pr-create
   ├─ 多维审查                               → pr-review
@@ -126,7 +133,8 @@ description: |
 |------|---------|---------|
 | 需求 | 用户有模糊想法 | Issue + 需求分析报告 |
 | 开发 | 验收标准明确，可行 | 全测试绿 + 审查通过 |
-| 交付 | 代码 ready，commit push | PR merged + release 发布(可选) |
+| 🔒 质量关卡 | 开发完成，代码已提交 | 构建+UT+覆盖率+lint+分析全部通过 |
+| 交付 | 质量关卡通过 | PR merged + release 发布(可选) |
 
 ## 快速开始
 

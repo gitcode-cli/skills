@@ -58,16 +58,25 @@ gitcode-dev-workflow（编排层）
 2. Superpowers 进一步拆解为 2-5min 粒度（issue-review 的分解可能是小时级）
 3. 超级原子任务保持与 gitcode issue 的子任务列表一致
 
-### 3. TDD + subagent 完成 → pr-create
+### 3. TDD + subagent 完成 → gitcode-dev-quality（质量关卡）
 
 触发条件：所有原子任务通过 + 全部测试绿 + 审查通过
+
+操作：
+1. 运行 gitcode-dev-quality：构建验证 → 全量UT → 覆盖率 → 格式化 → 静态分析
+2. 任何一项失败，回到开发阶段修复
+3. 全部通过后，生成质量报告，允许进入交付阶段
+
+### 4. 质量关卡通过 → pr-create
+
+触发条件：gitcode-dev-quality 全部绿色
 
 操作：
 1. gitcode-pr-create 检查当前分支的 commit 历史和 diff
 2. 自动生成 PR 标题（使用 conventional commit 格式）
 3. 在 PR 描述中自动引用关联的 gitcode issue 编号
 
-### 4. pr-create → pr-review
+### 5. pr-create → pr-review
 
 触发条件：PR 已创建
 
@@ -76,7 +85,7 @@ gitcode-dev-workflow（编排层）
 2. 按 6 个维度审查（代码质量/安全/架构/测试/文档/易用性）
 3. 生成行内评论和整体报告并发布到 PR 评论区
 
-### 5. merge → release-helper
+### 6. merge → release-helper
 
 触发条件：PR 已合并，需要发布新版本
 

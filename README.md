@@ -5,15 +5,16 @@ GitCode 全生命周期 skills 集合，结合 [Superpowers](https://github.com/
 ## 架构
 
 ```
-需求阶段              开发阶段              交付阶段
-(远端 GitCode)        (本地 Superpowers)    (远端 GitCode)
-    │                     │                     │
-    ├─ issue-create       ├─ writing-plans      ├─ pr-create
-    ├─ issue-review       ├─ TDD                ├─ pr-review
-    └─ issue-triage       ├─ subagent-dev       └─ release-helper
-                          └─ requesting-review
-            ↑                     ↑                     ↑
-            └─────── gitcode-dev-workflow（编排层）───────┘
+需求阶段              开发阶段            🔒质量关卡        交付阶段
+(远端 GitCode)        (本地 Superpowers)   (gitcode)         (远端 GitCode)
+    │                     │                  │                  │
+    ├─ issue-create       ├─ writing-plans   ├─ 构建验证       ├─ pr-create
+    ├─ issue-review       ├─ TDD             ├─ 全量UT         ├─ pr-review
+    └─ issue-triage       ├─ subagent-dev    ├─ 覆盖率         └─ release-helper
+                          └─ requesting-     ├─ 代码格式化
+                              review         └─ 静态分析
+            ↑                     ↑                  ↑                  ↑
+            └─────────── gitcode-dev-workflow（编排层）────────────────┘
 ```
 
 - **Superpowers**：需求澄清 / 原子任务拆解 / TDD / 子代理隔离 / 任务间审查 / 收尾
@@ -26,7 +27,8 @@ GitCode 全生命周期 skills 集合，结合 [Superpowers](https://github.com/
 
 | Skill | 做什么 |
 |-------|--------|
-| `gitcode-dev-workflow` | 全流程编排：idea → 需求 → 开发 → PR → 合并 → 发布 |
+| `gitcode-dev-workflow` | 全流程编排：idea → 需求 → 开发 → 质量关卡 → PR → 合并 → 发布 |
+| `gitcode-dev-quality` | 本地质量门禁：构建 → UT → 覆盖率 → lint → 静态分析 |
 
 ### Issue 流水线
 

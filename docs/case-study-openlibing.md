@@ -211,9 +211,45 @@ grep -r "CVE\|CveEntity\|CveController\|CveService" --include="*.java" src/
 
 ---
 
+## 🔒 质量关卡（必过，不可跳过）
+
+### Step 8 — gitcode-dev-quality
+
+开发代码提交后、创建 PR 前，必须通过质量门禁。**任何一步失败都不允许提交 PR**。
+
+```bash
+cd /tmp/openlibing-platform
+
+# 1. 构建验证
+mvn compile -q
+# ✓ BUILD SUCCESS
+
+# 2. 全量单元测试
+mvn test
+# ✓ Tests run: 91, Failures: 0, Errors: 0, Skipped: 0
+
+# 3. 覆盖率检查
+mvn verify -Pcoverage
+# ✓ 增量覆盖率: 87% (>80% 阈值)
+
+# 4. 代码格式化
+mvn spotless:check
+# ✓ No formatting issues
+
+# 5. 静态分析
+mvn pmd:check
+# ✓ No PMD violations
+
+# 最终判定: ✅ 全部通过 — 可提交 PR
+```
+
+质量报告生成后，才能进入交付阶段。
+
+---
+
 ## 阶段三：交付（代码 → PR → 审查 → 合并）
 
-### Step 8 — gitcode-pr-create
+### Step 9 — gitcode-pr-create
 
 ```bash
 # AI 检查变更
@@ -259,7 +295,7 @@ Fixes #1
 - [ ] 手动验证：上传真实扫描导出的 CSV 文件
 ```
 
-### Step 9 — gitcode-pr-review
+### Step 10 — gitcode-pr-review
 
 AI 执行 6 维度审查：
 
@@ -286,7 +322,7 @@ gc pr comments <number> -R aflyingto/openlibing-platform-release --json
 
 PR 评论页面上可以看到 3 条行内评论 + 1 条整体报告。
 
-### Step 10 — Superpowers finishing
+### Step 11 — Superpowers finishing
 
 ```bash
 mvn test
@@ -298,7 +334,7 @@ git status
 
 → 选项：merge PR → main
 
-### Step 11 — gitcode-release-helper（如需发布新版本）
+### Step 12 — gitcode-release-helper（如需发布新版本）
 
 ```bash
 # 生成 release note
@@ -320,7 +356,7 @@ gc release upload v1.2 target/openlibing-platform-release.jar \
 开发阶段 (TDD + 子代理并行)          → ~2h
 交付阶段 (PR + 审查 + merge)         → ~15min
 
-总计: AI 编码 ~2.5h，人工审核确认 ~10min
+总计: AI 编码 + 质量检查 ~3h，人工审核确认 ~10min
 ```
 
 ### 你做了什么事
@@ -337,4 +373,6 @@ gc release upload v1.2 target/openlibing-platform-release.jar \
 |------|-----------|
 | 需求 | 提问澄清 → 查重 → 提交 Issue → 代码搜索 → 需求分析 → 任务分解 |
 | 开发 | 原子任务拆解 → TDD 循环 → 3 子代理并行执行 → 任务间审查 |
+| 🔒 质量关卡 | 构建验证 → 全量UT → 覆盖率 → 格式化 → 静态分析 → 生成报告 |
 | 交付 | 检查变更 → PR 标题描述 → 6维度代码审查 → 行内评论发布 |
+| 发布 | release note → checklist → 上传资产 |
